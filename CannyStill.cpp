@@ -14,7 +14,7 @@ int main() {
 	cv::Mat matBlurred;			// intermediate blured image
 	cv::Mat matCanny;			// Canny edge image
 
-	matOriginal = cv::imread("image.jpg");
+	matOriginal = cv::imread("image.jpg");			// open image
 
 	if (matOriginal.empty()) {									// if unable to open image
 		std::cout << "error: image not read from file\n\n";		// show error message on command line

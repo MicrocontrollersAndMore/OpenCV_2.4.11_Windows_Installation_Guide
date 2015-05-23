@@ -6,7 +6,7 @@ import sys
 
 ###################################################################################################
 def main():
-    imgOriginal = cv2.imread("image.jpg")               # read in image
+    imgOriginal = cv2.imread("image.jpg")               # open image
 
     if imgOriginal is None:                             # if image was not read successfully
         print "error: image not read from file \n\n"        # print error message to std out
