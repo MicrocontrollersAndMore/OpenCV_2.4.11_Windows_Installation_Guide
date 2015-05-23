@@ -1,4 +1,6 @@
-'frmMain.vb
+'CannyStill.vb
+'
+'put this code in your main form, for example frmMain.vb
 '
 'add the following components to your form:
 'btnOpenFile (Button)
