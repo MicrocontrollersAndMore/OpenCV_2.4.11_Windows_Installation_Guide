@@ -74,16 +74,21 @@ Public Class frmMain
     Private Sub btnOpenFile_Click(sender As Object, e As EventArgs) Handles btnOpenFile.Click
         Dim drChosenFile As DialogResult
 
-        drChosenFile = ofdOpenFile.ShowDialog()             'open file dialog
-        lblChosenFile.Text = ofdOpenFile.FileName           'write file name to label
+        drChosenFile = ofdOpenFile.ShowDialog()                 'open file dialog
 
         If (drChosenFile <> Windows.Forms.DialogResult.OK Or ofdOpenFile.FileName = "") Then    'if user chose Cancel or filename is blank . . .
             lblChosenFile.Text = "file not chosen"              'show error message on label
             Return                                              'and exit function
         End If
+        
+        lblChosenFile.Text = ofdOpenFile.FileName               'write file name to label
+        
+        put this in a try catch ???
 
         imgOriginal = New Image(Of Bgr, Byte)(ofdOpenFile.FileName)     'open image
-
+        
+        check if imgOriginal Is Nothing here ???
+        
         imgGrayscale = imgOriginal.Convert(Of Gray, Byte)()             'convert to grayscale
 
         imgBlurred = imgGrayscale.SmoothGaussian(5)                     'blur
