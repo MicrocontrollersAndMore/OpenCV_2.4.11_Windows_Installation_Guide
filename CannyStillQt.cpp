@@ -131,40 +131,40 @@ frmMain::~frmMain() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void frmMain::on_btnOpenFile_clicked() {
-    QString strFileName = QFileDialog::getOpenFileName();
+    QString strFileName = QFileDialog::getOpenFileName();       // bring up open file dialog
 
-    if(strFileName == "") {
-        ui->lblChosenFile->setText("file not chosen");
-        return;
+    if(strFileName == "") {                                     // if file was not chosen
+        ui->lblChosenFile->setText("file not chosen");          // update label
+        return;                                                 // and exit function
     }
 
-    matOriginal = cv::imread(strFileName.toStdString());			// open image
+    matOriginal = cv::imread(strFileName.toStdString());        // open image
 
     if (matOriginal.empty()) {									// if unable to open image
-        ui->lblChosenFile->setText("error: image not read from file");
-        return;												// and exit program
+        ui->lblChosenFile->setText("error: image not read from file");      // update lable with error message
+        return;                                                             // and exit function
     }
+        // if we get to this point image was opened successfully
+    ui->lblChosenFile->setText(strFileName);                // update label woth file name
 
-    ui->lblChosenFile->setText(strFileName);
+    cv::cvtColor(matOriginal, matGrayscale, CV_BGR2GRAY);               // convert to grayscale
+    cv::GaussianBlur(matGrayscale, matBlurred, cv::Size(5, 5), 1.5);    // blur
+    cv::Canny(matBlurred, matCanny, 100, 200);                          // get Canny edges
 
-    cv::cvtColor(matOriginal, matGrayscale, CV_BGR2GRAY);
-    cv::GaussianBlur(matGrayscale, matBlurred, cv::Size(5, 5), 1.5);
-    cv::Canny(matBlurred, matCanny, 100, 200);
+    QImage qimgOriginal = matToQImage(matOriginal);         // convert original and Canny images to QImage
+    QImage qimgCanny = matToQImage(matCanny);               //
 
-    QImage qimgOriginal = matToQImage(matOriginal);
-    QImage qimgCanny = matToQImage(matCanny);
-
-    ui->lblOriginal->setPixmap(QPixmap::fromImage(qimgOriginal));
-    ui->lblCanny->setPixmap(QPixmap::fromImage(qimgCanny));
+    ui->lblOriginal->setPixmap(QPixmap::fromImage(qimgOriginal));   // show original and Canny images on labels
+    ui->lblCanny->setPixmap(QPixmap::fromImage(qimgCanny));         //
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 QImage frmMain::matToQImage(cv::Mat mat) {
-    if(mat.channels() == 1) {
-        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);
-    } else if(mat.channels() == 3) {
-        cv::cvtColor(mat, mat, CV_BGR2RGB);
-        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
+    if(mat.channels() == 1) {                   // if grayscale image
+        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);     // declare and return a QImage
+    } else if(mat.channels() == 3) {            // if 3 channel color image
+        cv::cvtColor(mat, mat, CV_BGR2RGB);     // invert BGR to RGB
+        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);       // declare and return a QImage
     } else {
         qDebug() << "in openCVMatToQImage, image was not 1 channel or 3 channel, should never get here";
     }
