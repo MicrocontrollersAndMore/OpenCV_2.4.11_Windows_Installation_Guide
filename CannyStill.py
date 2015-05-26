@@ -1,4 +1,4 @@
-# canny_still.py
+# CannyStill.py
 
 import cv2
 import os

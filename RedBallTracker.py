@@ -1,4 +1,4 @@
-# canny_webcam.py
+# CannyWebcam.py
 
 import cv2
 import numpy as np
