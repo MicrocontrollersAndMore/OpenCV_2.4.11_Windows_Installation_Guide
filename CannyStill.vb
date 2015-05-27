@@ -26,7 +26,6 @@ Imports Emgu.CV.UI
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Public Class frmMain
-
     ' member variables ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
     Dim imgOriginal As Image(Of Bgr, Byte)          'input image
     Dim imgGrayscale As Image(Of Gray, Byte)        'grayscale of input image
@@ -48,7 +47,7 @@ Public Class frmMain
     End Sub
 
     '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-    Private Sub frmMain_Resize(sender As Object, e As EventArgs) Handles MyBase.Resize
+    Private Sub frmMain_Resize( sender As Object,  e As EventArgs) Handles MyBase.Resize
         'This If Else statement is necessary to throw out the first time the Form1_Resize event is called.
         'For some reason, in VB.NET the Resize event is called once before the constructor, then the constructor is called,
         'then the Resize event is called each time the form is resized.  The first time the Resize event is called
@@ -71,7 +70,7 @@ Public Class frmMain
     End Sub
 
     '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-    Private Sub btnOpenFile_Click(sender As Object, e As EventArgs) Handles btnOpenFile.Click
+    Private Sub btnOpenFile_Click( sender As Object,  e As EventArgs) Handles btnOpenFile.Click
         Dim drChosenFile As DialogResult
 
         drChosenFile = ofdOpenFile.ShowDialog()                 'open file dialog
@@ -80,14 +79,18 @@ Public Class frmMain
             lblChosenFile.Text = "file not chosen"              'show error message on label
             Return                                              'and exit function
         End If
-        
-        lblChosenFile.Text = ofdOpenFile.FileName               'write file name to label
-        
-        put this in a try catch ???
 
-        imgOriginal = New Image(Of Bgr, Byte)(ofdOpenFile.FileName)     'open image
+        Try
+            imgOriginal = New Image(Of Bgr, Byte)(ofdOpenFile.FileName)     'open image
+        Catch ex As Exception
+            lblChosenFile.Text = "unable to open image, error: " + ex.Message
+            Return
+        End Try
         
-        check if imgOriginal Is Nothing here ???
+        If imgOriginal Is Nothing Then
+            lblChosenFile.Text = "unable to open image"
+            Return
+        End If
         
         imgGrayscale = imgOriginal.Convert(Of Gray, Byte)()             'convert to grayscale
 
@@ -100,6 +103,7 @@ Public Class frmMain
 
         ibOriginal.Image = imgOriginal              'update image boxes
         ibCanny.Image = imgCanny                    '
+
     End Sub
 
 End Class
