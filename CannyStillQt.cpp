@@ -1,3 +1,5 @@
+CannyStillQt
+
 this is not an actual C++ file !!!
 
 this file is 3 files in one:
@@ -12,9 +14,9 @@ then copy/paste ONLY THE ADDITIONAL PORTIONS from the code below:
 for this program the widgets you need to add are:
 
 btnOpenFile (QPushButton)
-lblChooseFile (QLabel)
+lblChosenFile (QLabel)
 lblOriginal (QLabel)
-lblProcessed (QLabel)
+lblCanny (QLabel)
 
 ####################################################################################################
 ## CannyStillQt.pro (1 of 3) #######################################################################

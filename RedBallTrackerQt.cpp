@@ -1,3 +1,5 @@
+RedBallTrackerQt
+
 this is not an actual C++ file !!!
 
 this file is 3 files in one:
@@ -106,12 +108,6 @@ private:
     cv::Mat matOriginal;
     cv::Mat matProcessed;
 
-    //QImage qimgOriginal;
-    //QImage qimgProcessed;
-
-    //std::vector<cv::Vec3f> vecCircles;
-    //std::vector<cv::Vec3f>::iterator itrCircles;
-
     QTimer* qtimer;
 
     QImage frmMain::matToQImage(cv::Mat mat);
@@ -215,9 +211,9 @@ QImage frmMain::matToQImage(cv::Mat mat) {
 void frmMain::on_btnPauseOrResume_clicked() {
     if(qtimer->isActive() == true) {
         qtimer->stop();
-        ui->btnPauseOrResume->setText("resume");
+        ui->btnPauseOrResume->setText(" resume ");
     } else {
         qtimer->start(20);
-        ui->btnPauseOrResume->setText("pause");
+        ui->btnPauseOrResume->setText(" pause ");
     }
 }

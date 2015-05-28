@@ -1,3 +1,5 @@
+CannyWebcamQt
+
 this is not an actual C++ file !!!
 
 this file is 3 files in one:
