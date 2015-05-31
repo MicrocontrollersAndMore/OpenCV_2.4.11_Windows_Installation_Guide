@@ -22,12 +22,12 @@ int main() {
 
 	char charCheckForEscKey = 0;
 
-	while (charCheckForEscKey != 27 && capWebcam.isOpened()) {		// for each frame (until the Esc key is pressed) . . .
-		bool blnFrameReadSuccessfully = capWebcam.read(matOriginal);
+	while (charCheckForEscKey != 27 && capWebcam.isOpened()) {		// until the Esc key is pressed or webcam connection is lost
+		bool blnFrameReadSuccessfully = capWebcam.read(matOriginal);		// get next frame
 
-		if (!blnFrameReadSuccessfully || matOriginal.empty()) {
-			std::cout << "error: frame not read from webcam\n";	// if returned NULL, print error message to std out
-			break;
+		if (!blnFrameReadSuccessfully || matOriginal.empty()) {		// if frame not read successfully
+			std::cout << "error: frame not read from webcam\n";		// print error message to std out
+			break;													// and jump out of while loop
 		}
 
 		cv::cvtColor(matOriginal, matGrayscale, CV_BGR2GRAY);		// convert to grayscale

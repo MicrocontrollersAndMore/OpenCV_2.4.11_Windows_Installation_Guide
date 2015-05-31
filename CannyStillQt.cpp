@@ -101,12 +101,12 @@ private slots:
 private:
     Ui::frmMain *ui;
 
-    cv::Mat matOriginal;
-    cv::Mat matGrayscale;
-    cv::Mat matBlurred;
-    cv::Mat matCanny;
+    cv::Mat matOriginal;            // input image
+    cv::Mat matGrayscale;           // grayscale of input image
+    cv::Mat matBlurred;             // intermediate blured image
+    cv::Mat matCanny;               // Canny edge image
 
-    QImage frmMain::matToQImage(cv::Mat mat);
+    QImage frmMain::matToQImage(cv::Mat mat);           // function prototype
 };
 
 #endif // FRMMAIN_H
@@ -147,7 +147,7 @@ void frmMain::on_btnOpenFile_clicked() {
         return;                                                             // and exit function
     }
         // if we get to this point image was opened successfully
-    ui->lblChosenFile->setText(strFileName);                // update label woth file name
+    ui->lblChosenFile->setText(strFileName);                // update label with file name
 
     cv::cvtColor(matOriginal, matGrayscale, CV_BGR2GRAY);               // convert to grayscale
     cv::GaussianBlur(matGrayscale, matBlurred, cv::Size(5, 5), 1.5);    // blur

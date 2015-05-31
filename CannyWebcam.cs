@@ -2,6 +2,7 @@
 //
 // put this code in your main form, for example frmMain.cs
 // add the following components to your form:
+//
 // TableLayoutPanel1 (TableLayoutPanel) (name does not really matter for this, we will not need to refer to it in code
 // ibOriginal (Emgu ImageBox)
 // ibCanny (Emgu ImageBox)
@@ -26,18 +27,18 @@ using Emgu.CV.Structure;        //
 using Emgu.CV.UI;               //
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-namespace RedBallTracker1
+namespace CannyWebcam
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     public partial class frmMain : Form
     {
         // member variables ///////////////////////////////////////////////////////////////////////
-        Capture capWebcam;
+        Capture capWebcam;                      // Capture object to use with webcam
 
-        Image<Bgr, Byte> imgOriginal;
-        Image<Gray, Byte> imgGrayscale;
-        Image<Gray, Byte> imgBlurred;
-        Image<Gray, Byte> imgCanny;
+        Image<Bgr, Byte> imgOriginal;           // input image
+        Image<Gray, Byte> imgGrayscale;         // grayscale of input image
+        Image<Gray, Byte> imgBlurred;           // intermediate blured image
+        Image<Gray, Byte> imgCanny;             // Canny edge image
 
         // constructor ////////////////////////////////////////////////////////////////////////////
         public frmMain()
@@ -50,14 +51,14 @@ namespace RedBallTracker1
         {
             try
             {
-                capWebcam = new Capture();
+                capWebcam = new Capture();              // associate the capture object to the default webcam
             }
-            catch(Exception ex)
-            {
+            catch (Exception ex)                        // catch error if unsuccessful
+            {                                           // show error via message box
                 MessageBox.Show("unable to read from webcam, error: " + Environment.NewLine + Environment.NewLine +
                                 ex.Message + Environment.NewLine + Environment.NewLine +
                                 "exiting program");
-                Environment.Exit(0);
+                Environment.Exit(0);                    // and exit program
             }
             Application.Idle += processFrameAndUpdateGUI;       // add process image function to the application's list of tasks
         }
@@ -67,22 +68,22 @@ namespace RedBallTracker1
         {
             imgOriginal = capWebcam.QueryFrame();               // get next frame from the webcam
 
-            if (imgOriginal == null)
-            {
+            if (imgOriginal == null)                            // if we did not get a frame
+            {                                                   // show error via message box
                 MessageBox.Show("unable to read from webcam" + Environment.NewLine + Environment.NewLine +
                                 "exiting program");
                 Environment.Exit(0);                            // and exit program
             }
-            imgGrayscale = imgOriginal.Convert<Gray, Byte>();
-            imgBlurred = imgGrayscale.SmoothGaussian(5);
+            imgGrayscale = imgOriginal.Convert<Gray, Byte>();       // convert to grayscale
+            imgBlurred = imgGrayscale.SmoothGaussian(5);            // blur
 
-            double dblCannyThresh = 150.0;
-            double dblCannyThreshLinking = 75.0;
+            double dblCannyThresh = 150.0;                          // declare params for call to Canny
+            double dblCannyThreshLinking = 75.0;                    //
 
-            imgCanny = imgBlurred.Canny(dblCannyThresh, dblCannyThreshLinking);
+            imgCanny = imgBlurred.Canny(dblCannyThresh, dblCannyThreshLinking);     // get Canny edges
 
-            ibOriginal.Image = imgOriginal;
-            ibCanny.Image = imgCanny;
+            ibOriginal.Image = imgOriginal;             // update image boxes
+            ibCanny.Image = imgCanny;                   //
         }
     }
 }

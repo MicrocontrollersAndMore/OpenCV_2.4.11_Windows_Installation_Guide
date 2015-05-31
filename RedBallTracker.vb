@@ -22,6 +22,7 @@ Imports Emgu.CV.UI              '
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Public Class frmMain
+
     ' member variables ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
     Dim capWebcam As Capture                        'Capture object to use with webcam
     Dim blnCapturingInProcess As Boolean = False    'use this to keep track of if we are capturing or not to facilitate pause/resume button feature
@@ -70,6 +71,7 @@ Public Class frmMain
         CvInvoke.cvDilate(imgProcessed, imgProcessed, structuringElementEx, 1)      'close image (dilate, then erode)
         CvInvoke.cvErode(imgProcessed, imgProcessed, structuringElementEx, 1)       'closing "closes" (i.e. fills in) foreground gaps
 
+                        'fill variable circles with all circles in the processed image
 															'Canny threshold
 																		'accumulator threshold
 																		    'size of image / this param = "accumulator resolution"
@@ -83,6 +85,7 @@ Public Class frmMain
 		    If(txtXYRadius.Text <> "") Then							'if we are not on the first line in the text box
 			    txtXYRadius.AppendText(Environment.NewLine)			'then insert a new line char
 		    End If
+                        'print ball position and radius
 			    						            'x position of center point of circle
 			    						                                                                'y position of center point of circle
 				    					                                                                                                                    'radius of circle

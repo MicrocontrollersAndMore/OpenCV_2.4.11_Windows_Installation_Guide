@@ -1,4 +1,4 @@
-# CannyWebcam.py
+# RedBallTracker.py
 
 import cv2
 import numpy as np
@@ -14,7 +14,7 @@ def main():
         os.system("pause")                                              # pause until user presses a key so user can see error message
         return                                                          # and exit function (which exits program)
 
-    while cv2.waitKey(1) != 27 and capWebcam.isOpened():                # for each frame (until the Esc key is pressed) . . .
+    while cv2.waitKey(1) != 27 and capWebcam.isOpened():                # until the Esc key is pressed or webcam connection is lost
         blnFrameReadSuccessfully, imgOriginal = capWebcam.read()            # read next frame
 
         if not blnFrameReadSuccessfully or imgOriginal is None:             # if frame was not read successfully

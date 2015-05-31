@@ -1,3 +1,18 @@
+// CannyStill.cs
+//
+// put this code in your main form, for example frmMain.cs
+// add the following components to your form:
+//
+// btnOpenFile (Button)
+// lblChosenFile (Label)
+// ibOriginal (Emgu ImageBox)
+// ibCanny (Emgu ImageBox)
+// ofdOpenFile (OpenFileDialog)
+//
+// NOTE: Do NOT copy/paste the entire text of this file into Visual Studio !! It will not work if you do !!
+// Follow the video on my YouTube channel to create the project and have Visual Studio write part of the code for you,
+// then copy/pase the remaining text as needed
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,22 +23,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
-using Emgu.CV.UI;
+using Emgu.CV;                  //
+using Emgu.CV.CvEnum;           // usual Emgu Cv imports
+using Emgu.CV.Structure;        //
+using Emgu.CV.UI;               //
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-namespace CS_test_2
+namespace CannyStill
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     public partial class frmMain : Form 
     {
         // member variables ///////////////////////////////////////////////////////////////////////
-        Image<Bgr, Byte> imgOriginal;
-        Image<Gray, Byte> imgGrayscale;
-        Image<Gray, Byte> imgBlurred;
-        Image<Gray, Byte> imgCanny;
+        Image<Bgr, Byte> imgOriginal;           // input image
+        Image<Gray, Byte> imgGrayscale;         // grayscale of input image
+        Image<Gray, Byte> imgBlurred;           // intermediate blured image
+        Image<Gray, Byte> imgCanny;             // Canny edge image
 
         // constructor ////////////////////////////////////////////////////////////////////////////
         public frmMain()
@@ -36,40 +51,40 @@ namespace CS_test_2
         {
             DialogResult drChosenFile;
 
-            drChosenFile = ofdOpenFile.ShowDialog();
+            drChosenFile = ofdOpenFile.ShowDialog();            // open file dialog
 
-            if (drChosenFile != System.Windows.Forms.DialogResult.OK || ofdOpenFile.FileName == "")
+            if (drChosenFile != System.Windows.Forms.DialogResult.OK || ofdOpenFile.FileName == "")     // if user chose Cancel or filename is blank . . .
             {
-                lblChosenFile.Text = "file not chosen";
-                return;
+                lblChosenFile.Text = "file not chosen";             // show error message on label
+                return;                                             // and exit function
             }
             
             try
             {
-                imgOriginal = new Image<Bgr, byte>(ofdOpenFile.FileName);
+                imgOriginal = new Image<Bgr, byte>(ofdOpenFile.FileName);       // open image
             }
-            catch (Exception exception)
+            catch (Exception exception)                                         // if error occurred
             {
-                lblChosenFile.Text = "unable to open image, error: " + exception.Message;
-                return;
+                lblChosenFile.Text = "unable to open image, error: " + exception.Message;       // show error message on label
+                return;                                                                         // and exit function
             }
 
-            if (imgOriginal == null)
+            if (imgOriginal == null)                                    // if image could not be opened
             {
-                lblChosenFile.Text = "unable to open image";
-                return;
+                lblChosenFile.Text = "unable to open image";            // show error message on label
+                return;                                                 // and exit function
             }
 
-            imgGrayscale = imgOriginal.Convert<Gray, Byte>();
-            imgBlurred = imgGrayscale.SmoothGaussian(5);
+            imgGrayscale = imgOriginal.Convert<Gray, Byte>();           // convert to grayscale
+            imgBlurred = imgGrayscale.SmoothGaussian(5);                // blur
 
-            double dblCannyThresh = 180.0;
-            double dblCannyThreshLinking = 120.0;
+            double dblCannyThresh = 180.0;                              // declare params for call to Canny
+            double dblCannyThreshLinking = 120.0;                       //
 
-            imgCanny = imgBlurred.Canny(dblCannyThresh, dblCannyThreshLinking);
+            imgCanny = imgBlurred.Canny(dblCannyThresh, dblCannyThreshLinking);         // get Canny edges
 
-            ibOriginal.Image = imgOriginal;
-            ibCanny.Image = imgCanny;
+            ibOriginal.Image = imgOriginal;                 // update image boxes
+            ibCanny.Image = imgCanny;                       //
         }
     }
 }

@@ -92,7 +92,7 @@ class frmMain : public QMainWindow {
     Q_OBJECT
 
 public slots:
-    void processFrameAndUpdateGUI();
+    void processFrameAndUpdateGUI();                // function prototype
 
 public:
     explicit frmMain(QWidget *parent = 0);
@@ -104,15 +104,15 @@ private slots:
 private:
     Ui::frmMain *ui;
 
-    cv::VideoCapture capWebcam;
-    cv::Mat matOriginal;
-    cv::Mat matProcessed;
+    cv::VideoCapture capWebcam;             // Capture object to use with webcam
+    cv::Mat matOriginal;                    // original image
+    cv::Mat matProcessed;                   // processed image
 
-    QTimer* qtimer;
+    QTimer* qtimer;                 // timer for processFrameAndUpdateGUI()
 
-    QImage frmMain::matToQImage(cv::Mat mat);
+    QImage frmMain::matToQImage(cv::Mat mat);       // function prototype
 
-    void frmMain::exitProgram();
+    void frmMain::exitProgram();                    // function prototype
 };
 
 #endif // FRMMAIN_H
@@ -132,17 +132,17 @@ private:
 frmMain::frmMain(QWidget *parent) : QMainWindow(parent), ui(new Ui::frmMain) {
     ui->setupUi(this);
 
-    capWebcam.open(0);
+    capWebcam.open(0);                  // associate the capture object to the default webcam
 
-    if(capWebcam.isOpened() == false) {
-        QMessageBox::information(this, "", "error: capWebcam not accessed successfully \n\n exiting program\n");
-        exitProgram();
-        return;
+    if(capWebcam.isOpened() == false) {                 // if unsuccessful
+        QMessageBox::information(this, "", "error: capWebcam not accessed successfully \n\n exiting program\n");        // show error message
+        exitProgram();                                  // and exit program
+        return;                                         //
     }
 
-    qtimer = new QTimer(this);
-    connect(qtimer, SIGNAL(timeout()), this, SLOT(processFrameAndUpdateGUI()));
-    qtimer->start(20);
+    qtimer = new QTimer(this);                          // instantiate timer
+    connect(qtimer, SIGNAL(timeout()), this, SLOT(processFrameAndUpdateGUI()));     // associate timer to processFrameAndUpdateGUI
+    qtimer->start(20);                                  // start timer, set to cycle every 20 msec (50x per sec), it will not actually cycle this often
 }
 
 // destructor /////////////////////////////////////////////////////////////////////////////////////
@@ -152,8 +152,8 @@ frmMain::~frmMain() {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void frmMain::exitProgram() {
-    if(qtimer->isActive()) qtimer->stop();
-    QApplication::quit();
+    if(qtimer->isActive()) qtimer->stop();          // if timer is running, stop timer
+    QApplication::quit();                           // and exit program
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,9 +161,9 @@ void frmMain::processFrameAndUpdateGUI() {
     bool blnFrameReadSuccessfully = capWebcam.read(matOriginal);                    // get next frame from the webcam
 
     if (!blnFrameReadSuccessfully || matOriginal.empty()) {                            // if we did not get a frame
-        QMessageBox::information(this, "", "unable to read from webcam \n\n exiting program\n");
-        exitProgram();
-        return;
+        QMessageBox::information(this, "", "unable to read from webcam \n\n exiting program\n");        // show error via message box
+        exitProgram();                                                              // and exit program
+        return;                                                                     //
     }
 
     cv::GaussianBlur(matOriginal, matProcessed, cv::Size(5, 5), 2.0);
@@ -175,32 +175,32 @@ void frmMain::processFrameAndUpdateGUI() {
     cv::dilate(matProcessed, matProcessed, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));		// close image (dilate, then erode)
     cv::erode(matProcessed, matProcessed, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5)));		// closing "closes" (i.e. fills in) foreground gaps
 
-    std::vector<cv::Vec3f> v3fCircles;
-    cv::HoughCircles(matProcessed, v3fCircles, CV_HOUGH_GRADIENT, 2, matProcessed.rows / 4, 100, 50, 10, 400);
+    std::vector<cv::Vec3f> v3fCircles;                                                                              // declare circles variable
+    cv::HoughCircles(matProcessed, v3fCircles, CV_HOUGH_GRADIENT, 2, matProcessed.rows / 4, 100, 50, 10, 400);      // fill variable circles with all circles in the processed image
 
-    for(unsigned int i = 0; i < v3fCircles.size(); i++) {
-        ui->txtXYRadius->appendPlainText(QString("ball position x =") + QString::number(v3fCircles[i][0]).rightJustified(4, ' ') +
+    for(unsigned int i = 0; i < v3fCircles.size(); i++) {                                                                                       // for each circle
+        ui->txtXYRadius->appendPlainText(QString("ball position x =") + QString::number(v3fCircles[i][0]).rightJustified(4, ' ') +              // print ball position and radius
                                                                          QString(", y =") + QString::number(v3fCircles[i][1]).rightJustified(4, ' ') +
                                                                          QString(", radius =") + QString::number(v3fCircles[i][2], 'f', 3).rightJustified(7, ' '));
 
-        cv::circle(matOriginal, cv::Point((int)v3fCircles[i][0], (int)v3fCircles[i][1]), 3, cv::Scalar(0, 255, 0), CV_FILLED);
-        cv::circle(matOriginal, cv::Point((int)v3fCircles[i][0], (int)v3fCircles[i][1]), (int)v3fCircles[i][2], cv::Scalar(0, 0, 255), 3);
+        cv::circle(matOriginal, cv::Point((int)v3fCircles[i][0], (int)v3fCircles[i][1]), 3, cv::Scalar(0, 255, 0), CV_FILLED);                  // draw small green circle at center of detected object
+        cv::circle(matOriginal, cv::Point((int)v3fCircles[i][0], (int)v3fCircles[i][1]), (int)v3fCircles[i][2], cv::Scalar(0, 0, 255), 3);      // draw red circle around the detected object
     }
 
-    QImage qimgOriginal = matToQImage(matOriginal);
-    QImage qimgProcessed = matToQImage(matProcessed);
+    QImage qimgOriginal = matToQImage(matOriginal);                         // convert from OpenCV Mat to Qt QImage
+    QImage qimgProcessed = matToQImage(matProcessed);                       //
 
-    ui->lblOriginal->setPixmap(QPixmap::fromImage(qimgOriginal));
-    ui->lblProcessed->setPixmap(QPixmap::fromImage(qimgProcessed));
+    ui->lblOriginal->setPixmap(QPixmap::fromImage(qimgOriginal));           // show images on form labels
+    ui->lblProcessed->setPixmap(QPixmap::fromImage(qimgProcessed));         //
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 QImage frmMain::matToQImage(cv::Mat mat) {
-    if(mat.channels() == 1) {
-        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);
-    } else if(mat.channels() == 3) {
-        cv::cvtColor(mat, mat, CV_BGR2RGB);
-        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
+    if(mat.channels() == 1) {                                   // if 1 channel (grayscale or black and white) image
+        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);     // return QImage
+    } else if(mat.channels() == 3) {                            // if 3 channel color image
+        cv::cvtColor(mat, mat, CV_BGR2RGB);                     // flip colors
+        return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);       // return QImage
     } else {
         qDebug() << "in openCVMatToQImage, image was not 1 channel or 3 channel, should never get here";
     }
@@ -209,11 +209,11 @@ QImage frmMain::matToQImage(cv::Mat mat) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void frmMain::on_btnPauseOrResume_clicked() {
-    if(qtimer->isActive() == true) {
-        qtimer->stop();
-        ui->btnPauseOrResume->setText(" resume ");
-    } else {
-        qtimer->start(20);
-        ui->btnPauseOrResume->setText(" pause ");
+    if(qtimer->isActive() == true) {                // if timer is running we are currently processing an image, so . . .
+        qtimer->stop();                                 // stop timer
+        ui->btnPauseOrResume->setText(" resume ");      // and update button text
+    } else {                                        // else timer is not running, so we are currently paused, so . . .
+        qtimer->start(20);                              // start timer again
+        ui->btnPauseOrResume->setText(" pause ");       // and update button text
     }
 }

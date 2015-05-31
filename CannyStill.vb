@@ -3,6 +3,7 @@
 'put this code in your main form, for example frmMain.vb
 '
 'add the following components to your form:
+'
 'btnOpenFile (Button)
 'lblChosenFile (Label)
 'ibOriginal (Emgu ImageBox)
@@ -16,23 +17,24 @@
 'in this example we are using code to resize components when the form is resized,
 'if you used the layout managers you do not need to use the component resizing code
 
-Option Explicit On
-Option Strict On
+Option Explicit On      'require explicit declaration of variables, this is NOT Python !!
+Option Strict On        'restrict implicit data type conversions to only widening conversions
 
-Imports Emgu.CV
-Imports Emgu.CV.CvEnum
-Imports Emgu.CV.Structure
-Imports Emgu.CV.UI
+Imports Emgu.CV                 '
+Imports Emgu.CV.CvEnum          'usual Emgu Cv imports
+Imports Emgu.CV.Structure       '
+Imports Emgu.CV.UI              '
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Public Class frmMain
+
     ' member variables ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
     Dim imgOriginal As Image(Of Bgr, Byte)          'input image
     Dim imgGrayscale As Image(Of Gray, Byte)        'grayscale of input image
     Dim imgBlurred As Image(Of Gray, Byte)          'intermediate blured image
     Dim imgCanny As Image(Of Gray, Byte)            'Canny edge image
 
-    Dim blnFirstTimeInResizeEvent As Boolean = True     'see comment if frmMain_Resize for purpose of this variable
+    Dim blnFirstTimeInResizeEvent As Boolean = True     'see comment in frmMain_Resize for purpose of this variable
     Dim intButtonAndLabelHorizPadding As Integer        '
     Dim intImageBoxesHorizPadding As Integer            'original component padding for component resizing
     Dim intImageBoxesVertPadding As Integer             '
@@ -60,12 +62,12 @@ Public Class frmMain
             lblChosenFile.Width = Me.Width - btnOpenFile.Width - intButtonAndLabelHorizPadding      'resize label
 
             ibOriginal.Width = CInt((Me.Width - intImageBoxesHorizPadding) / 2)             'resize image box widths
-            ibCanny.Width = ibOriginal.Width
+            ibCanny.Width = ibOriginal.Width                                                '
 
             ibCanny.Left = ibOriginal.Width + CInt(intImageBoxesHorizPadding * (1 / 3))     'update x position for Canny image box
 
             ibOriginal.Height = Me.Height - btnOpenFile.Height - intImageBoxesVertPadding   'resize image box heights
-            ibCanny.Height = ibOriginal.Height
+            ibCanny.Height = ibOriginal.Height                                              '
         End If
     End Sub
 
@@ -81,15 +83,15 @@ Public Class frmMain
         End If
 
         Try
-            imgOriginal = New Image(Of Bgr, Byte)(ofdOpenFile.FileName)     'open image
-        Catch ex As Exception
-            lblChosenFile.Text = "unable to open image, error: " + ex.Message
-            Return
+            imgOriginal = New Image(Of Bgr, Byte)(ofdOpenFile.FileName)             'open image
+        Catch ex As Exception                                                       'if error occurred
+            lblChosenFile.Text = "unable to open image, error: " + ex.Message       'show error message on label
+            Return                                                                  'and exit function
         End Try
         
-        If imgOriginal Is Nothing Then
-            lblChosenFile.Text = "unable to open image"
-            Return
+        If imgOriginal Is Nothing Then                                  'if image could not be opened
+            lblChosenFile.Text = "unable to open image"                 'show error message on label
+            Return                                                      'and exit function
         End If
         
         imgGrayscale = imgOriginal.Convert(Of Gray, Byte)()             'convert to grayscale
