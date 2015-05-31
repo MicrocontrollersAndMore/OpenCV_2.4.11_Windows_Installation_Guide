@@ -29,10 +29,10 @@ using Emgu.CV.Structure;        //
 using Emgu.CV.UI;               //
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-namespace CannyStill
+namespace CannyStill1
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    public partial class frmMain : Form 
+    public partial class frmMain : Form
     {
         // member variables ///////////////////////////////////////////////////////////////////////
         Image<Bgr, Byte> imgOriginal;           // input image
@@ -40,10 +40,32 @@ namespace CannyStill
         Image<Gray, Byte> imgBlurred;           // intermediate blured image
         Image<Gray, Byte> imgCanny;             // Canny edge image
 
+        int intButtonAndLabelHorizPadding;      //
+        int intImageBoxesHorizPadding;          // original component padding for component resizing
+        int intImageBoxesVertPadding;           //
+
         // constructor ////////////////////////////////////////////////////////////////////////////
         public frmMain()
         {
             InitializeComponent();
+
+            intButtonAndLabelHorizPadding = this.Width - btnOpenFile.Width - lblChosenFile.Width;       //
+            intImageBoxesHorizPadding = this.Width - ibOriginal.Width - ibCanny.Width;                  // get original padding for component resizing later
+            intImageBoxesVertPadding = this.Height - btnOpenFile.Height - ibOriginal.Height;            //
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        private void frmMain_Resize(object sender, EventArgs e)
+        {
+            lblChosenFile.Width = this.Width - btnOpenFile.Width - intButtonAndLabelHorizPadding;       // resize label
+
+            ibOriginal.Width = Convert.ToInt32((this.Width - intImageBoxesHorizPadding) / 2);           // resize image box widths
+            ibCanny.Width = ibOriginal.Width;                                                           //
+
+            ibCanny.Left = ibOriginal.Width + Convert.ToInt32(intImageBoxesHorizPadding * (1.0 / 2.5));     // update x position for Canny image box
+
+            ibOriginal.Height = this.Height - btnOpenFile.Height - intImageBoxesVertPadding;            // resize image box heights
+            ibCanny.Height = ibOriginal.Height;                                                         //
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +80,7 @@ namespace CannyStill
                 lblChosenFile.Text = "file not chosen";             // show error message on label
                 return;                                             // and exit function
             }
-            
+
             try
             {
                 imgOriginal = new Image<Bgr, byte>(ofdOpenFile.FileName);       // open image
@@ -85,6 +107,8 @@ namespace CannyStill
 
             ibOriginal.Image = imgOriginal;                 // update image boxes
             ibCanny.Image = imgCanny;                       //
+
         }
+
     }
 }

@@ -28,9 +28,8 @@ using Emgu.CV.Structure;       //
 using Emgu.CV.UI;              //
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-namespace RedBallTracker
+namespace RedBallTracker1
 {
-    ///////////////////////////////////////////////////////////////////////////////////////////////
     public partial class frmMain : Form
     {
         // member variables ///////////////////////////////////////////////////////////////////////
@@ -41,7 +40,6 @@ namespace RedBallTracker
         Image<Bgr, Byte> imgBlurredBGR;         // blurred color image
         Image<Gray, Byte> imgProcessed;         // processed image
 
-        // constructor ////////////////////////////////////////////////////////////////////////////
         public frmMain()
         {
             InitializeComponent();
@@ -62,6 +60,7 @@ namespace RedBallTracker
                 Environment.Exit(0);                // and exit program
             }
             Application.Idle += processFrameAndUpdateGUI;       // add process image function to the application's list of tasks
+            blnCapturingInProcess = true;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +98,7 @@ namespace RedBallTracker
 
                 txtXYRadius.ScrollToCaret();                // scroll down in text box so most recent line added (at the bottom) will be shown
 
-                                                            // draw a small green circle at the center of the detected object
+                // draw a small green circle at the center of the detected object
                 CvInvoke.cvCircle(imgOriginal, new Point((int)circle.Center.X, (int)circle.Center.Y), 3, new MCvScalar(0, 255, 0), -1, LINE_TYPE.CV_AA, 0);
 
                 imgOriginal.Draw(circle, new Bgr(Color.Red), 3);        // draw a red circle around the detected object
@@ -123,7 +122,7 @@ namespace RedBallTracker
                 blnCapturingInProcess = true;                       // update flag variable
                 btnPauseOrResume.Text = " pause ";                  // new button will offer pause option
             }
-
         }
+
     }
 }
